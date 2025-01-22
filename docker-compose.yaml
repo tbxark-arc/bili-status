@@ -1,0 +1,10 @@
+services:
+  app:
+    image: ghcr.io/tbxark-arc/bili-status:latest
+    container_name: bili-status
+    network_mode: bridge
+    pull_policy: always
+    volumes:
+      - ${BIND_CONFIG:-./config.json}:/config.json
+    restart: always
+    command: ["--config", "${CONFIG_PATH:-/config.json}"]

@@ -1,4 +1,4 @@
-module bili-status
+module github.com/tbxark-arc/bili-status
 
 go 1.23
 
