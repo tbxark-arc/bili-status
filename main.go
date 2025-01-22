@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	conf := flag.String("conf", "config.json", "config file")
+	conf := flag.String("config", "config.json", "config file")
 	flag.Parse()
 	config, err := loadConfig[Config](*conf)
 	if err != nil {

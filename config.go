@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -35,7 +34,7 @@ func loadConfig[T any](path string) (*T, error) {
 	} else {
 		bytes, err := os.ReadFile(path)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 		var config = new(T)
 		err = json.Unmarshal(bytes, config)
@@ -51,5 +50,14 @@ func saveCacheStore(path string, cacheStore *CacheStore) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(path, bytes, 0644)
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	_, err = file.Write(bytes)
+	if err != nil {
+		return err
+	}
+	return nil
 }
