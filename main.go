@@ -164,7 +164,7 @@ func (b *Bot) login(ctx context.Context, api *bot.Bot, update *models.Update) er
 	if err != nil {
 		return err
 	}
-	_, err = api.SendPhoto(ctx, &bot.SendPhotoParams{
+	msg, err := api.SendPhoto(ctx, &bot.SendPhotoParams{
 		ChatID: update.Message.Chat.ID,
 		Photo: &models.InputFileUpload{
 			Filename: "qr.png",
@@ -177,6 +177,10 @@ func (b *Bot) login(ctx context.Context, api *bot.Bot, update *models.Update) er
 	go func() {
 		result, e := b.client.LoginWithQRCode(bilibili.LoginWithQRCodeParam{
 			QrcodeKey: qrCode.QrcodeKey,
+		})
+		_, _ = api.DeleteMessage(ctx, &bot.DeleteMessageParams{
+			ChatID:    msg.Chat.ID,
+			MessageID: msg.ID,
 		})
 		if e != nil || result.Code != 0 {
 			_ = replay(ctx, api, update, "登录失败")
