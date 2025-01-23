@@ -2,6 +2,10 @@ github.com/Baozisoftware/qrcode-terminal-go v0.0.0-20170407111555-c0650d8dff0f h
 github.com/Baozisoftware/qrcode-terminal-go v0.0.0-20170407111555-c0650d8dff0f/go.mod h1:4a58ifQTEe2uwwsaqbh3i2un5/CBPg+At/qHpt18Tmk=
 github.com/CuteReimu/bilibili/v2 v2.0.0-20250122025514-ac936956565e h1:8C6SWVqy/7xuISg741gvWKLe177tMX3Jg+0sb20CuJE=
 github.com/CuteReimu/bilibili/v2 v2.0.0-20250122025514-ac936956565e/go.mod h1:nUTzYKqQ/Kl3011GMtm/iyMO554+Jqby1h1B/I2domg=
+github.com/TBXark/conf-provider v0.0.0-20250123055011-0ea7f4183911 h1:T3y8/Y+E9s3yJrtwVmorJZtG0O6bS0honMZXzYgNwak=
+github.com/TBXark/conf-provider v0.0.0-20250123055011-0ea7f4183911/go.mod h1:ZI+g/iC/Uy0PyeeTMx3BuzPBN6qQpu707dKGwYn0/Y8=
+github.com/TBXark/confstore v0.0.0-20250123061803-218218c5a25e h1:6e7h0zndHVv7cuMHdF7BjSyqhSba0gPa1nGOO1SHpys=
+github.com/TBXark/confstore v0.0.0-20250123061803-218218c5a25e/go.mod h1:TOxM19Snt9wT02PJzyz66sgq7sWhr4AFzPEZIKvVnTE=
 github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
 github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
 github.com/go-resty/resty/v2 v2.16.4 h1:81IjtszQKwbz7dot4LLYGwhJNUsNwECD2O7nru5q60E=

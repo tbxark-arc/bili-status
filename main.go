@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/CuteReimu/bilibili/v2"
+	"github.com/TBXark/confstore"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 	"log"
@@ -16,7 +17,7 @@ import (
 func main() {
 	conf := flag.String("config", "config.json", "config file")
 	flag.Parse()
-	config, err := loadConfig[Config](*conf)
+	config, err := confstore.Load[Config](*conf)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,7 +46,7 @@ func NewBot(conf *Config) (*Bot, error) {
 		return nil, err
 	}
 	client := bilibili.New()
-	store, err := loadConfig[CacheStore](conf.CacheStore)
+	store, err := confstore.Load[CacheStore](conf.CacheStore)
 	if err == nil && store != nil {
 		client.SetCookiesString(store.Cookie)
 	}
@@ -188,7 +189,7 @@ func (b *Bot) login(ctx context.Context, api *bot.Bot, update *models.Update) er
 		cache := CacheStore{
 			Cookie: b.client.GetCookiesString(),
 		}
-		_ = saveConfig(b.conf.CacheStore, &cache)
+		_ = confstore.Save(b.conf.CacheStore, &cache)
 		_ = replay(ctx, api, update, "登录成功")
 	}()
 	return nil
@@ -196,7 +197,7 @@ func (b *Bot) login(ctx context.Context, api *bot.Bot, update *models.Update) er
 
 func (b *Bot) logout(ctx context.Context, api *bot.Bot, update *models.Update) error {
 	b.client.SetCookiesString("")
-	_ = saveConfig(b.conf.CacheStore, &CacheStore{
+	_ = confstore.Save(b.conf.CacheStore, &CacheStore{
 		Cookie: "",
 	})
 	return replay(ctx, api, update, "已退出登录")

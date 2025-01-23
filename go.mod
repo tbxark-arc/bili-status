@@ -4,11 +4,13 @@ go 1.23
 
 require (
 	github.com/CuteReimu/bilibili/v2 v2.0.0-20250122025514-ac936956565e
+	github.com/TBXark/conf-provider v0.0.0-20250123055011-0ea7f4183911
 	github.com/go-telegram/bot v1.13.3
 )
 
 require (
 	github.com/Baozisoftware/qrcode-terminal-go v0.0.0-20170407111555-c0650d8dff0f // indirect
+	github.com/TBXark/confstore v0.0.0-20250123061803-218218c5a25e // indirect
 	github.com/go-resty/resty/v2 v2.16.4 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
