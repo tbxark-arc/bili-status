@@ -45,7 +45,7 @@ func loadConfig[T any](path string) (*T, error) {
 	}
 }
 
-func saveCacheStore(path string, cacheStore *CacheStore) error {
+func saveConfig[T any](path string, cacheStore *T) error {
 	bytes, err := json.Marshal(cacheStore)
 	if err != nil {
 		return err

@@ -123,7 +123,7 @@ func (b *Bot) loadLatestStatus(skipCheck bool) (string, error) {
 			len(latestPlay) > 0 &&
 			len(currentPlay) == len(latestPlay) &&
 			currentPlay[0] == latestPlay[0] {
-			return "", fmt.Errorf("no new video")
+			return "", fmt.Errorf("video not updated: %s(%d)", video.Bvid, video.Play)
 		}
 	}
 
@@ -135,6 +135,11 @@ func (b *Bot) loadLatestStatus(skipCheck bool) (string, error) {
 	}
 
 	b.status[video.Bvid] = video.Play
+	text := renderVideoInfo(video, card)
+	return text, nil
+}
+
+func renderVideoInfo(video bilibili.UserVideo, card *bilibili.UserCard) string {
 	text := fmt.Sprintf(`
 播放量：%d
 《%s》
@@ -147,7 +152,7 @@ func (b *Bot) loadLatestStatus(skipCheck bool) (string, error) {
 截止至 %s
 你的粉丝数为%d
 `, video.Play, video.Title, video.VideoReview, video.Comment, video.Bvid, time.Now().Format("2006-01-02 15:04:05"), card.Follower)
-	return text, nil
+	return text
 }
 
 func (b *Bot) login(ctx context.Context, api *bot.Bot, update *models.Update) error {
@@ -179,7 +184,7 @@ func (b *Bot) login(ctx context.Context, api *bot.Bot, update *models.Update) er
 		cache := CacheStore{
 			Cookie: b.client.GetCookiesString(),
 		}
-		_ = saveCacheStore(b.conf.CacheStore, &cache)
+		_ = saveConfig(b.conf.CacheStore, &cache)
 		_ = replay(ctx, api, update, "登录成功")
 	}()
 	return nil
@@ -187,7 +192,7 @@ func (b *Bot) login(ctx context.Context, api *bot.Bot, update *models.Update) er
 
 func (b *Bot) logout(ctx context.Context, api *bot.Bot, update *models.Update) error {
 	b.client.SetCookiesString("")
-	_ = saveCacheStore(b.conf.CacheStore, &CacheStore{
+	_ = saveConfig(b.conf.CacheStore, &CacheStore{
 		Cookie: "",
 	})
 	return replay(ctx, api, update, "已退出登录")
