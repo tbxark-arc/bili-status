@@ -3,21 +3,35 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/CuteReimu/bilibili/v2"
-	"github.com/TBXark/confstore"
-	"github.com/go-telegram/bot"
-	"github.com/go-telegram/bot/models"
 	"log"
+	"os"
 	"strconv"
 	"time"
+
+	"github.com/CuteReimu/bilibili/v2"
+	"github.com/go-sphere/confstore"
+	"github.com/go-sphere/confstore/codec"
+	"github.com/go-sphere/confstore/provider"
+	"github.com/go-sphere/confstore/provider/file"
+	"github.com/go-sphere/confstore/provider/http"
+	"github.com/go-telegram/bot"
+	"github.com/go-telegram/bot/models"
 )
 
 func main() {
 	conf := flag.String("config", "config.json", "config file")
 	flag.Parse()
-	config, err := confstore.Load[Config](*conf)
+	config, err := confstore.Load[Config](provider.NewSelect(*conf,
+		provider.If(file.IsLocalPath, func(s string) provider.Provider {
+			return file.New(s)
+		}),
+		provider.If(http.IsRemoteURL, func(s string) provider.Provider {
+			return http.New(s, http.WithTimeout(10))
+		}),
+	), codec.JsonCodec())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,7 +60,7 @@ func NewBot(conf *Config) (*Bot, error) {
 		return nil, err
 	}
 	client := bilibili.New()
-	store, err := confstore.Load[CacheStore](conf.CacheStore)
+	store, err := confstore.Load[CacheStore](file.New(conf.CacheStore), codec.JsonCodec())
 	if err == nil && store != nil {
 		client.SetCookiesString(store.Cookie)
 	}
@@ -186,10 +200,16 @@ func (b *Bot) login(ctx context.Context, api *bot.Bot, update *models.Update) er
 		if e != nil || result.Code != 0 {
 			_ = replay(ctx, api, update, "登录失败")
 		}
-		cache := CacheStore{
+		raw, e := json.Marshal(&CacheStore{
 			Cookie: b.client.GetCookiesString(),
+		})
+		if e != nil {
+			return
 		}
-		_ = confstore.Save(b.conf.CacheStore, &cache)
+		e = os.WriteFile(b.conf.CacheStore, raw, 0o644)
+		if e != nil {
+			return
+		}
 		_ = replay(ctx, api, update, "登录成功")
 	}()
 	return nil
@@ -197,9 +217,16 @@ func (b *Bot) login(ctx context.Context, api *bot.Bot, update *models.Update) er
 
 func (b *Bot) logout(ctx context.Context, api *bot.Bot, update *models.Update) error {
 	b.client.SetCookiesString("")
-	_ = confstore.Save(b.conf.CacheStore, &CacheStore{
+	raw, err := json.Marshal(&CacheStore{
 		Cookie: "",
 	})
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(b.conf.CacheStore, raw, 0o644)
+	if err != nil {
+		return err
+	}
 	return replay(ctx, api, update, "已退出登录")
 }
 
